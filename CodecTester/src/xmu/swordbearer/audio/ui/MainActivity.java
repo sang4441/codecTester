@@ -115,7 +115,7 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 		switch(v.getId()) {
 		case R.id.startEcho:
 			audioWrapper.startSend();
-			audioWrapper.startReceive();
+//			audioWrapper.startReceive();
 			btnStartEcho.setEnabled(false);
 			btnStopEcho.setEnabled(true);
 			

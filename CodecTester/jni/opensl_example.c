@@ -45,6 +45,7 @@ void start_process() {
   if(p == NULL) return;
 }
 
+
 short * getBuffer() {
 //	__android_log_write(ANDROID_LOG_INFO, "JNI", "here1");
 	short  inbuffer[VECSAMPS_MONO];
