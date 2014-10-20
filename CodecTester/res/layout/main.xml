@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollViewMain"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff" >
+
+    <LinearLayout
+        android:id="@+id/LayoutMain"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="0px"
+            android:layout_height="0px"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+
+        <EditText
+            android:id="@+id/edittext_ip"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:hint="IP:"
+            android:text="1.234.45.226" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/startEcho"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="start echo" />
+
+            <Button
+                android:id="@+id/stopEcho"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="stop echo" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" >
+
+            <Button
+                android:id="@+id/startRecord"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="start recorder" />
+
+            <Button
+                android:id="@+id/stopRecord"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="stop recorder" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:visibility="gone" >
+
+            <Button
+                android:id="@+id/startListen"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="start player" />
+
+            <Button
+                android:id="@+id/stopListen"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="stop player" />
+        </LinearLayout>
+
+        <ScrollView
+            android:id="@+id/scrollViewLog"
+            android:layout_width="fill_parent"
+            android:layout_height="150dp" >
+
+            <TextView
+                android:id="@+id/textViewLog"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="log text will be here..." />
+        </ScrollView>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <RadioGroup
+                    android:id="@+id/radioGroupLocal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <RadioButton
+                        android:id="@+id/radioNet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:tag="false"
+                        android:text="네트워크 전송"
+                        android:textColor="#000000" />
+
+                    <RadioButton
+                        android:id="@+id/radioLocal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tag="true"
+                        android:text="로컬 에코"
+                        android:textColor="#000000" />
+                </RadioGroup>
+
+                <RadioGroup
+                    android:id="@+id/radioGroupEncoding"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <RadioButton
+                        android:id="@+id/radioEncode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:tag="true"
+                        android:text="인코딩 함"
+                        android:textColor="#000000" />
+
+                    <RadioButton
+                        android:id="@+id/radioNoEncode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tag="false"
+                        android:text="인코딩 안함"
+                        android:textColor="#000000" />
+                </RadioGroup>
+                
+                <RadioGroup
+                    android:id="@+id/radioGroupAmpl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <RadioButton
+                        android:id="@+id/radioAmpl_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tag="-2"
+                        android:text="볼륨 1/2배"
+                        android:textColor="#000000" />
+                    <RadioButton
+                        android:id="@+id/radioAmpl1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:tag="1"
+                        android:text="볼륨  그대로"
+                        android:textColor="#000000" />
+                    <RadioButton
+                        android:id="@+id/radioAmpl2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tag="2"
+                        android:text="볼륨 2배"
+                        android:textColor="#000000" />
+                    <RadioButton
+                        android:id="@+id/radioAmpl3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tag="3"
+                        android:text="볼륨 3배"
+                        android:textColor="#000000" />
+                    <RadioButton
+                        android:id="@+id/radioAmpl5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tag="5"
+                        android:text="볼륨 5배"
+                        android:textColor="#000000" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <RadioGroup
+                android:id="@+id/radioGroupCodec"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+
+                <RadioButton
+                    android:id="@+id/radioPCMA"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:tag="8"
+                    android:text="PCMA"
+                    android:textColor="#000000" />
+
+                <RadioButton
+                    android:id="@+id/radioPCMU"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tag="0"
+                    android:text="PCMU"
+                    android:textColor="#000000" />
+
+                <RadioButton
+                    android:id="@+id/radioGSM"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tag="3"
+                    android:text="GSM"
+                    android:textColor="#000000" />
+
+                <RadioButton
+                    android:id="@+id/radioSpeex"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tag="98"
+                    android:text="Speex"
+                    android:textColor="#000000" />
+
+                <RadioButton
+                    android:id="@+id/radioG722"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tag="9"
+                    android:text="G722"
+                    android:textColor="#000000" />
+
+                <RadioButton
+                    android:id="@+id/radioOpus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tag="107"
+                    android:text="Opus"
+                    android:textColor="#000000" />
+
+                <RadioButton
+                    android:id="@+id/radioiLBC"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tag="97"
+                    android:text="iLBC"
+                    android:textColor="#000000" />
+
+                <RadioButton
+                    android:id="@+id/radioRAW"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tag="88"
+                    android:text="RAW"
+                    android:textColor="#000000" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnExit"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Exit" />
+    </LinearLayout>
+
+</ScrollView>
