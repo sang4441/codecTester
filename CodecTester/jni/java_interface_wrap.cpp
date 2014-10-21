@@ -7,7 +7,7 @@
  * changes to this file unless you know what you are doing--modify the SWIG
  * interface file instead.
  * ----------------------------------------------------------------------------- */
-
+#include <android/log.h>
 #define SWIGJAVA
 
 
@@ -232,29 +232,100 @@ SWIGEXPORT void JNICALL Java_opensl_1example_opensl_1exampleJNI_stop_1process(JN
 }
 
 
-SWIGEXPORT jlong JNICALL Java_opensl_1example_opensl_1exampleJNI_getBuffer(JNIEnv *jenv, jclass jcls) {
-  jlong jresult = 0 ;
-  short *result = 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  result = (short *)getBuffer();
-  *(short **)&jresult = result; 
-  return jresult;
+//SWIGEXPORT jlong JNICALL Java_opensl_1example_opensl_1exampleJNI_getBuffer(JNIEnv *jenv, jclass jcls) {
+//  jlong jresult = 0 ;
+//  short *result = 0 ;
+//
+//  (void)jenv;
+//  (void)jcls;
+//  result = (short *)getBuffer();
+//  *(short **)&jresult = result;
+//  return jresult;
+//}
+//
+//
+//SWIGEXPORT void JNICALL Java_opensl_1example_opensl_1exampleJNI_setBuffer(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+//  short *arg1 = (short *) 0 ;
+//
+//  (void)jenv;
+//  (void)jcls;
+//  arg1 = *(short **)&jarg1;
+//  setBuffer(arg1);
+//}
+//
+//
+//#ifdef __cplusplus
+//}
+//#endif
+
+
+SWIGEXPORT jshortArray JNICALL Java_opensl_1example_opensl_1exampleJNI_getBuffer(JNIEnv *jenv, jclass jcls) {
+//  jshortArray jresult = 0 ;
+//  short *result = (short *)getBuffer();
+//
+//  (void)jcls;
+//  *(short **)&jresult = result;
+
+  // RECORDER_FRAMES = 64
+	//  jenv->ReleaseShortArrayElements(ret, jshort *elems, jint mode);
+
+
+
+  jshortArray ret = jenv->NewShortArray(64* sizeof(short));
+//  jshort * arrayElements = getBuffer();
+
+//     speex_bits_read_from(&decod_bits,(char *) inputArrayElements, nbBytes);
+     /*Decode the frame*/
+//     speex_decode_int(decod_state, &decod_bits, arrayElements);
+
+//     (*env)->ReleaseCharArrayElements(env, inputCharData, inputArrayElements,
+//             JNI_ABORT);
+//     jenv->ReleaseShortArrayElements(ret, arrayElements, 0);
+//  __android_log_print(ANDROID_LOG_INFO, "c++", "here0 = %d", getBuffer()[50]);
+
+  short tmp[64];;
+  memcpy (tmp, getBuffer(), 64 *sizeof(short));
+  jenv->SetShortArrayRegion(ret, 0, 64 * sizeof(short), tmp);
+//  sprintf(str, "%d", ret[0]);
+//  __android_log_write(ANDROID_LOG_ERROR, "test", str);
+
+  __android_log_print(ANDROID_LOG_INFO, "c++", "here1 = %d", tmp[50]);
+  __android_log_print(ANDROID_LOG_INFO, "c++", "here11 = %d", tmp[60]);
+
+   jboolean isCopy = JNI_TRUE;
+   jshort *val = jenv->GetShortArrayElements(ret, NULL);
+   jshort val0 = val[0];
+   jshort val1 = val[1];
+   jshort val50 = val[50];
+   jshort val60 = val[60];
+   __android_log_print(ANDROID_LOG_INFO, "c++", "here2 = %d", val50);
+   __android_log_print(ANDROID_LOG_INFO, "c++", "here3 = %d", val60);
+
+
+  return ret;
 }
 
 
-SWIGEXPORT void JNICALL Java_opensl_1example_opensl_1exampleJNI_setBuffer(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-  short *arg1 = (short *) 0 ;
-  
-  (void)jenv;
-  (void)jcls;
-  arg1 = *(short **)&jarg1; 
-  setBuffer(arg1);
+SWIGEXPORT void JNICALL Java_opensl_1example_opensl_1exampleJNI_setBuffer(JNIEnv *jenv, jclass jcls, jshortArray lin) {
+//	short tmp[64];
+//	memcpy (temp, arr, size *sizeof(int));
+//	memcpy(tmp, lin, 64 * sizeof(short));
+//  (void)jenv;
+//  (void)jcls;
+//  arg1 = *(short **)&jarg1;
+
+//	jshort *pcm;
+//	pcm = jenv->GetShortArrayElements(lin, NULL);
+//	jenv->ReleaseShortArrayElements(lin, pcm, 0);
+
+//	jshort* bufferArray = reinterpret_cast<jshort*>(AgentBase::GetMemoryManager()
+//	                    .Allocate(sizeof(jshort)*64 JDWP_FILE_LINE));
+	jshort * arrayElements;
+	jenv->GetShortArrayRegion(lin, 0, 64, arrayElements);
+    setBuffer(arrayElements);
 }
 
 
 #ifdef __cplusplus
 }
 #endif
-

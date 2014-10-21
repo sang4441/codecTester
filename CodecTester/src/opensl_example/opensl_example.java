@@ -17,13 +17,13 @@ public class opensl_example {
     opensl_exampleJNI.stop_process();
   }
 
-  public static SWIGTYPE_p_short getBuffer() {
-    long cPtr = opensl_exampleJNI.getBuffer();
-    return (cPtr == 0) ? null : new SWIGTYPE_p_short(cPtr, false);
+  public static short[] getBuffer() {
+    short[] cPtr = opensl_exampleJNI.getBuffer();
+    return cPtr;
   }
 
-  public static void setBuffer(SWIGTYPE_p_short data) {
-    opensl_exampleJNI.setBuffer(SWIGTYPE_p_short.getCPtr(data));
+  public static void setBuffer(short[] data) {
+    opensl_exampleJNI.setBuffer(data);
   }
 
 }
