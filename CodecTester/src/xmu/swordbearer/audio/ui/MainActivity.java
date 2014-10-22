@@ -210,7 +210,7 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 				NetConfig.setServerHost(ipString);
 				btnStartRecord.setEnabled(false);
 				btnStopRecord.setEnabled(true);
-//				audioWrapper.startRecord();
+				audioWrapper.startRecord();
 				audioWrapper.startSend();
 			}
 		});
@@ -219,7 +219,7 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 			public void onClick(View arg0) {
 				btnStartRecord.setEnabled(true);
 				btnStopRecord.setEnabled(false);
-//				audioWrapper.stopRecord();
+				audioWrapper.stopRecord();
 				audioWrapper.stopSend();
 			}
 		});
@@ -228,7 +228,7 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 			public void onClick(View arg0) {
 				btnStartListen.setEnabled(false);
 				btnStopListen.setEnabled(true);
-//				audioWrapper.startListen();
+				audioWrapper.startListen();
 				audioWrapper.startReceive();
 			}
 		});
@@ -236,7 +236,7 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 			public void onClick(View arg0) {
 				btnStartListen.setEnabled(true);
 				btnStopListen.setEnabled(false);
-//				audioWrapper.stopListen();
+				audioWrapper.stopListen();
 				audioWrapper.stopReceive();
 			}
 		});

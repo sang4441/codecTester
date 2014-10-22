@@ -31,7 +31,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "opensl_io.h"
 
 #define BUFFERFRAMES 1024
-#define VECSAMPS_MONO 64
+//#define VECSAMPS_MONO 64
+#define VECSAMPS_MONO 160
 #define VECSAMPS_STEREO 128
 #define SR 8000
 
@@ -95,10 +96,14 @@ short * getBuffer() {
 //	__android_log_write(ANDROID_LOG_ERROR, "init", str);
 //	sprintf(str, "%d", inbuffer[40]);
 //	__android_log_write(ANDROID_LOG_ERROR, "init", str);
-	sprintf(str, "%d", inbuffer[50]);
-	__android_log_write(ANDROID_LOG_ERROR, "init", str);
-	sprintf(str, "%d", inbuffer[60]);
-	__android_log_write(ANDROID_LOG_ERROR, "init", str);
+	sprintf(str, "%d", inbuffer[0]);
+	__android_log_write(ANDROID_LOG_ERROR, "init0", str);
+	sprintf(str, "%d", inbuffer[1]);
+	__android_log_write(ANDROID_LOG_ERROR, "init1", str);
+	sprintf(str, "%d", inbuffer[2]);
+	__android_log_write(ANDROID_LOG_ERROR, "init2", str);
+	sprintf(str, "%d", inbuffer[159]);
+	__android_log_write(ANDROID_LOG_ERROR, "init159", str);
 	sprintf(str, "%d", min);
 	__android_log_write(ANDROID_LOG_ERROR, "Min", str);
 	sprintf(str, "%d", max);

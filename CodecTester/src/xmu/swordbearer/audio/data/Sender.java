@@ -11,6 +11,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Vector;
@@ -49,7 +50,7 @@ public class Sender implements Runnable {
 	public static boolean encode = true;
 	public static boolean time_check = true;
 	public static int SAMPLERATE = 8000; // 8KHZ
-	public static int BUFFER_FRAME_SIZE = 64; // 160 samples = 160 short = 320byte
+	public static int BUFFER_FRAME_SIZE = 160; // 160 samples = 160 short = 320byte
 	public static int FRAME_PERIOD = 20; // ms, 160 samples / 8000 samples/s * 1000(ms/s)
 	public static ArrayBlockingQueue <byte[]> queue = new ArrayBlockingQueue<byte[]>(100);
 	public static String codecName = "PCMA"; // RAW iLBC Opus PCMA PCMU speex silk8 silk16 silk24 GSM BV16 G722
@@ -145,10 +146,12 @@ public class Sender implements Runnable {
 				System.arraycopy(timestamp.array(), 0, arr, size, 8);
 			}
 			
+
 			// 맨 앞 4byte에 순서 추가
 			timestamp.putInt(0, seq++);
 			System.arraycopy(timestamp.array(), 0, arr, 0, 4);
 			
+
 			if (local) { // 로컬일 경우 큐에 넣는다.
 				queue.add(arr); 
 				if (queue.size()>10) queue.poll(); // 10개만 유지시킨다.
@@ -171,7 +174,7 @@ public class Sender implements Runnable {
 		Log.d(TAG, "start");
 //		if (true) { codecTest(); return; }
 		
-//		init();  
+		init();  
 		this.isSendering = true;
 		
 		/*
@@ -200,6 +203,14 @@ public class Sender implements Runnable {
 //		audioRecord.startRecording();
 		while (isSendering) {    
 			         
+			    
+//			bufferRead = BUFFER_FRAME_SIZE;
+			before = start;       
+			start = System.currentTimeMillis();
+//			bufferRead = audioRecord.read(lin, 0, BUFFER_FRAME_SIZE);
+			 
+			
+			//-------------------------------------------------------------------------
 //			opensl_example.setBuffer(opensl_example.getBuffer());
 //			lin = opensl_example.getBuffer();
 			
@@ -207,22 +218,33 @@ public class Sender implements Runnable {
 //			opensl_example.setBuffer(opensl_example.getBuffer());
 			 
 			short[] bufferTmp = new short[BUFFER_FRAME_SIZE];
-			bufferTmp = opensl_example.getBuffer();
-			lin = bufferTmp;
-			int min = 0, max =0, average =0;
-			for(int i = 1; i < BUFFER_FRAME_SIZE; i++) { 
+//			bufferTmp = opensl_example.getBuffer();
+			bufferTmp = Arrays.copyOf(opensl_example.getBuffer(), BUFFER_FRAME_SIZE);
+//			bufferTmp = lin;
+
+//			System.arraycopy(bufferTmp, 0, opensl_example.getBuffer(), 0, BUFFER_FRAME_SIZE);
+//			bufferTmp = opensl_example.getBuffer();
+			Log.d("size init2", String.valueOf(bufferTmp.length));
+
+//			lin = bufferTmp;
+			int min = 0, max = 0, average = 0;
+			for(int i = 0; i < BUFFER_FRAME_SIZE; i++) { 
 				average = average + bufferTmp[i];
 				if (bufferTmp[i] < min) {
-					min = bufferTmp[i];
+					min = bufferTmp[i]; 
 				}
 				if (bufferTmp[i] > max) {
 					max = bufferTmp[i];
 				}
-			}
-			 
-//			Log.d("init", String.valueOf(bufferTmp[0]));
-////			Log.d("init", String.valueOf(bufferTmp[1]));
-//			Log.d("init", String.valueOf(bufferTmp[2]));
+//				if (bufferTmp[i] == 0) {
+//					bufferTmp[i] = 1;
+//				} 
+			} 
+//			Log.i(TAG, shortToHex(bufferTmp)); 
+			Log.d("init", "-----------------------------------------------------");
+			Log.d("init", String.valueOf(bufferTmp[0]));
+			Log.d("init1", String.valueOf(bufferTmp[1]));
+			Log.d("init2", String.valueOf(bufferTmp[2]));
 ////			Log.d("init", String.valueOf(bufferTmp[3]));
 //			Log.d("init", String.valueOf(bufferTmp[4]));
 ////			Log.d("init", String.valueOf(bufferTmp[5]));
@@ -234,34 +256,36 @@ public class Sender implements Runnable {
 //			Log.d("init", String.valueOf(bufferTmp[20]));
 //			Log.d("init", String.valueOf(bufferTmp[30]));
 //			Log.d("init", String.valueOf(bufferTmp[40]));
-			Log.d("init", String.valueOf(bufferTmp[0]));
-			Log.d("init", String.valueOf(bufferTmp[60]));
+			Log.d("init159", String.valueOf(bufferTmp[159])); 
+//			Log.d("init64", String.valueOf(bufferTmp[64]));
+//			Log.d("init65", String.valueOf(bufferTmp[65]));
 //			Log.d("init", String.valueOf(opensl_example.getBuffer().length));
 //			Log.d("init", String.valueOf(bufferTmp.length));
 			Log.d("min", String.valueOf(min));
 			Log.d("max", String.valueOf(max)); 
 			Log.d("average", String.valueOf(average/BUFFER_FRAME_SIZE));
-			   
-			bufferRead = BUFFER_FRAME_SIZE;
-			before = start;      
-			start = System.currentTimeMillis();
-//			bufferRead = audioRecord.read(lin, 0, BUFFER_FRAME_SIZE);
+			Log.d("size", String.valueOf(bufferTmp.length));
+			//-------------------------------------------------------------------------
+			
+			
+			
 //			audioRecord.read(lin, 0, BUFFER_FRAME_SIZE); // discard for remove delay
+			
+			bufferRead = BUFFER_FRAME_SIZE;
+			
+			
 			if (bufferTmp[0] != 0) {
 				if (bufferRead > 0) { // short 기준 읽어온 사이즈, 읽어온 데이터가 있어야 전송
 					encoded = new byte[BUFFER_FRAME_SIZE*2]; // 인코딩 버퍼를 원본 음성만큼 잡는다.
 					if (encode) { // 인코딩을 할 경우, 인코딩 후 데이터 크기는 줄어든다.
 						// sipdroid 코덱들은 RTP용 12바이트를 앞쪽에 추가하여 인코딩된다.
-						Log.d("debug", "here2");
-						Log.d("debug", String.valueOf(bufferTmp[0]));
 
-						encodeSize = codec.encode(bufferTmp, 0, encoded, bufferRead);
-						Log.d("debug", "here3");
+						encodeSize = codec.encode(bufferTmp, 0, encoded, bufferTmp.length);
 
 						Log.d(TAG, "(+"+(start-before)+")read size : "+(bufferRead*2)+" byte, encoded size : "+encodeSize+" byte");
 					} else { // 인코딩하지 않을 경우, 원본과 사이즈가 동일하다.
 						short[] buf = new short[BUFFER_FRAME_SIZE];
-						System.arraycopy(lin, 0, buf, 0, bufferRead);
+						System.arraycopy(bufferTmp, 0, buf, 0, bufferRead);
 						ByteBuffer.wrap(encoded).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(buf);
 						
 						// gzip 추가
@@ -269,6 +293,8 @@ public class Sender implements Runnable {
 						encodeSize = bufferRead*2;
 						Log.d(TAG, "(+"+(start-before)+")read size : "+(bufferRead*2)+" byte");
 					}
+					Log.d("debug", "here1");
+
 					sendData(encoded, encodeSize, start);
 				} else {
 					Log.e(TAG, "bufferRead : "+bufferRead);
@@ -301,9 +327,9 @@ public class Sender implements Runnable {
 			
 		}
 //
-//		audioRecord.stop();
-//		audioRecord.release();
-//		audioRecord = null;
+		audioRecord.stop();
+		audioRecord.release();
+		audioRecord = null;
 		
 		if (socket != null) {
 			socket.close();
