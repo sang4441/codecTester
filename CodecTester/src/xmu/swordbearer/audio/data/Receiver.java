@@ -114,8 +114,15 @@ public class Receiver implements Runnable {
 				len = data.length;
 				Log.d(TAG, "get "+data.length+" bytes from queue");
 			} else {
+				Log.d("debug", "received");
 				socket.receive(packet);
 				data = packet.getData();
+
+				if (data == null) {
+					Log.d("debug", "no data");
+					return null;
+				}
+
 				len = packet.getLength();
 				Log.d(TAG, "get "+len+" bytes from server");
 			}
@@ -170,7 +177,6 @@ public class Receiver implements Runnable {
 		while (isRunning) {
 			before = start;
 			start = System.currentTimeMillis();
-
 			befseq = seq;
 			byte[] data = receiveData(end);
 			if (data == null) {

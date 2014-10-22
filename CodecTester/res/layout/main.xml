@@ -14,7 +14,7 @@
         <LinearLayout
             android:layout_width="0px"
             android:layout_height="0px"
-            android:focusable="true"
+            android:focusable="false"
             android:focusableInTouchMode="true" />
 
         <EditText
@@ -97,6 +97,49 @@
                 android:text="log text will be here..." />
         </ScrollView>
 
+        <LinearLayout android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            
+            <LinearLayout 
+                android:layout_width="wrap_content"
+            	android:layout_height="wrap_content"
+            	android:orientation="horizontal">
+            	
+                <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sampling rate" />
+                
+                <EditText
+            android:id="@+id/sampling_rate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:text="8000" />
+                
+            </LinearLayout>
+            <LinearLayout 
+                android:layout_width="wrap_content"
+            	android:layout_height="wrap_content"
+            	android:orientation="horizontal">
+                
+                 <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Buffer Size" />
+                 
+                 <EditText
+	            android:id="@+id/buffer_size"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:focusable="false"
+	            android:text="160" />
+                 
+            </LinearLayout>    
+            
+        </LinearLayout>
+        
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -108,6 +151,29 @@
                 android:layout_weight="1"
                 android:orientation="vertical" >
 
+                <RadioGroup
+                    android:id="@+id/radioGroupStreamType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <RadioButton
+                        android:id="@+id/radioAudioRecord"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:tag="false"
+                        android:text="AudioRecord"
+                        android:textColor="#000000" />
+
+                    <RadioButton
+                        android:id="@+id/radioJNI"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tag="true"
+                        android:text="JNI"
+                        android:textColor="#000000" />
+                </RadioGroup>
+                
                 <RadioGroup
                     android:id="@+id/radioGroupLocal"
                     android:layout_width="wrap_content"

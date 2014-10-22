@@ -34,11 +34,11 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 	private Button btnStartListen;
 	private Button btnStopListen;
 	private Button btnExit;
-	private EditText ipEditText;
+	private EditText ipEditText, srEditText, bsEditText;
 
 	// 새로 추가된 View
 	private Button btnStartEcho, btnStopEcho;
-	private RadioGroup rgLocal, rgEncode, rgCodec, rgAmpl;
+	private RadioGroup rgLocal, rgEncode, rgCodec, rgAmpl, streamType;
 	private static TextView textLog;
 	private static ScrollView svLog;
 	
@@ -69,6 +69,7 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 	private void initNewView() {
 		btnStartEcho = (Button) findViewById(R.id.startEcho);
 		btnStopEcho = (Button) findViewById(R.id.stopEcho);
+		streamType = (RadioGroup) findViewById(R.id.radioGroupStreamType);
 		rgLocal = (RadioGroup) findViewById(R.id.radioGroupLocal);
 		rgEncode = (RadioGroup) findViewById(R.id.radioGroupEncoding);
 		rgCodec = (RadioGroup) findViewById(R.id.radioGroupCodec);
@@ -79,6 +80,7 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 		
 		btnStartEcho.setOnClickListener(this);
 		btnStopEcho.setOnClickListener(this);
+		streamType.setOnCheckedChangeListener(this);
 		rgLocal.setOnCheckedChangeListener(this);
 		rgEncode.setOnCheckedChangeListener(this);
 		rgCodec.setOnCheckedChangeListener(this);
@@ -147,6 +149,14 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 			}
 		}
 		switch (checkedId) {
+		case R.id.radioAudioRecord:
+			Sender.isAudioRecord = true;
+			Log("오디오 레코드를 사용 합니다");
+			break;
+		case R.id.radioJNI:
+			Sender.isAudioRecord = false;
+			Log("JNI를 사용 합니다");
+			break;
 		case R.id.radioNet:
 			Sender.local = false;
 			Log("패킷을 서버에서 Echo 합니다");

@@ -260,72 +260,17 @@ SWIGEXPORT void JNICALL Java_opensl_1example_opensl_1exampleJNI_stop_1process(JN
 
 
 SWIGEXPORT jshortArray JNICALL Java_opensl_1example_opensl_1exampleJNI_getBuffer(JNIEnv *jenv, jclass jcls) {
-//  jshortArray jresult = 0 ;
-//  short *result = (short *)getBuffer();
-//
-//  (void)jcls;
-//  *(short **)&jresult = result;
-
-  // RECORDER_FRAMES = 64
-	//  jenv->ReleaseShortArrayElements(ret, jshort *elems, jint mode);
-
-
-
-//  jshort * arrayElements = getBuffer();
-
-//     speex_bits_read_from(&decod_bits,(char *) inputArrayElements, nbBytes);
-     /*Decode the frame*/
-//     speex_decode_int(decod_state, &decod_bits, arrayElements);
-
-//     (*env)->ReleaseCharArrayElements(env, inputCharData, inputArrayElements,
-//             JNI_ABORT);
-//     jenv->ReleaseShortArrayElements(ret, arrayElements, 0);
-//  __android_log_print(ANDROID_LOG_INFO, "c++", "here0 = %d", getBuffer()[50]);
-
-	jshortArray ret = jenv->NewShortArray(160* sizeof(short));
-
+  jshortArray ret = jenv->NewShortArray(160* sizeof(short));
   short tmp[160];
   memcpy (tmp, getBuffer(), 160 *sizeof(short));
   jenv->SetShortArrayRegion(ret, 0, 160 * sizeof(short), tmp);
-//  sprintf(str, "%d", ret[0]);
-//  __android_log_write(ANDROID_LOG_ERROR, "test", str);
-
-//  __android_log_print(ANDROID_LOG_INFO, "c++", "here1 = %d", tmp[50]);
-//  __android_log_print(ANDROID_LOG_INFO, "c++", "here11 = %d", tmp[60]);
-
-   jboolean isCopy = JNI_TRUE;
-   jshort *val = jenv->GetShortArrayElements(ret, NULL);
-   jshort val0 = val[0];
-   jshort val1 = val[1];
-   jshort val63 = val[63];
-   jshort val159 = val[159];
-   __android_log_print(ANDROID_LOG_INFO, "c++", "0 = %d", val0);
-   __android_log_print(ANDROID_LOG_INFO, "c++", "159 = %d", val159);
-
-
   return ret;
 }
 
 
 SWIGEXPORT void JNICALL Java_opensl_1example_opensl_1exampleJNI_setBuffer(JNIEnv *jenv, jclass jcls, jshortArray lin) {
-//	short tmp[64];
-//	memcpy (temp, arr, size *sizeof(int));
-//	memcpy(tmp, lin, 64 * sizeof(short));
-//  (void)jenv;
-//  (void)jcls;
-//  arg1 = *(short **)&jarg1;
-
-//	jshort *pcm;
-//	pcm = jenv->GetShortArrayElements(lin, NULL);
-//	jenv->ReleaseShortArrayElements(lin, pcm, 0);
-
-//	jshort* bufferArray = reinterpret_cast<jshort*>(AgentBase::GetMemoryManager()
-//	                    .Allocate(sizeof(jshort)*64 JDWP_FILE_LINE));
 	short tmp[160];
-//    memcpy (tmp, lin, 160 *sizeof(short));
     jenv->GetShortArrayRegion(lin, 0, 160, tmp);
-//	jshort * arrayElements;
-//	jenv->GetShortArrayRegion(lin, 0, 160, arrayElements);
     setBuffer(tmp);
 }
 

@@ -46,6 +46,7 @@ public class Sender implements Runnable {
 	/**
 	 * Recorder Configure
 	 */
+	public static boolean isAudioRecord = true;
 	public static boolean local = false; 
 	public static boolean encode = true;
 	public static boolean time_check = true;
@@ -58,6 +59,7 @@ public class Sender implements Runnable {
 	
 	public static DatagramSocket socket;
 	public static DatagramPacket packet;
+	public static boolean isDataSent = false;
 
 	private byte[] packetBuf = new byte[1300];
 	private int packetSize = 1300;
@@ -159,6 +161,7 @@ public class Sender implements Runnable {
 				dataPacket = new DatagramPacket(arr, size+(time_check?8:0), ip, port);
 				dataPacket.setData(arr);
 				socket.send(dataPacket);
+				Log.d("debug", "sent");
 			}
 			Log.d(TAG, "sendData"+(time_check?" with timestamp":"")+" : " + arr.length+" byte");
 		} catch (IllegalStateException e) {
@@ -173,8 +176,8 @@ public class Sender implements Runnable {
 	public void run() {
 		Log.d(TAG, "start");
 //		if (true) { codecTest(); return; }
-		
 		init();  
+
 		this.isSendering = true;
 		
 		/*
@@ -197,31 +200,31 @@ public class Sender implements Runnable {
 		ByteBuffer.wrap(randb).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(rands);
 		
 		long before, start = System.currentTimeMillis();
-		long reload = System.currentTimeMillis();
+		long reload = System.currentTimeMillis();		
 		
-		int mode = 0;
-		
-		
-		short[] bufferTmp = new short[BUFFER_FRAME_SIZE];
-		if (mode == 0) {
-			opensl_example.start_process();
-		} else {
+
+		if (isAudioRecord) {
 			audioRecord.startRecording();
+		} else {
+			opensl_example.start_process();
 		}
 		
+		short[] bufferTmp = new short[BUFFER_FRAME_SIZE];
+		
+		
 		while (isSendering) {    	         
-			if (mode == 0) {
-				bufferTmp = Arrays.copyOf(opensl_example.getBuffer(), BUFFER_FRAME_SIZE);
-				bufferRead = BUFFER_FRAME_SIZE;
-				Log.d("mode", "JNI");
-			} else {
+			if (isAudioRecord) {
 				bufferRead = audioRecord.read(lin, 0, BUFFER_FRAME_SIZE);
 				bufferTmp = Arrays.copyOf(lin, BUFFER_FRAME_SIZE);
 				Log.d("mode", "audioRecord");
+			} else {
+				bufferTmp = Arrays.copyOf(opensl_example.getBuffer(), BUFFER_FRAME_SIZE);
+				bufferRead = BUFFER_FRAME_SIZE;
+				Log.d("mode", "JNI");
 			}
 			before = start;       
 			start = System.currentTimeMillis();
-		
+		 
 			if (bufferRead > 0) { // short 기준 읽어온 사이즈, 읽어온 데이터가 있어야 전송
 				encoded = new byte[BUFFER_FRAME_SIZE*2]; // 인코딩 버퍼를 원본 음성만큼 잡는다.
 				if (encode) { // 인코딩을 할 경우, 인코딩 후 데이터 크기는 줄어든다.
@@ -249,7 +252,7 @@ public class Sender implements Runnable {
 			} else {
 				Log.e(TAG, "bufferRead : "+bufferRead);
 			}
-			before = start; 
+			before = start;   
 			
 			
 //				if (reload < start - 10000) {
