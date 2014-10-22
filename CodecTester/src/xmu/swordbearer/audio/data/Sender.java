@@ -89,22 +89,22 @@ public class Sender implements Runnable {
 	
 	public void startSending() {
 		// local인 경우 queue 초기화
-//		if (local) {
-//			queue.clear();
-//		} else { // socket 초기화
-//			if (socket != null) {
-//				socket.close();
-//				socket = null;
-//			}
-//			try {
-//				Log.d(TAG, NetConfig.CLIENT_PORT + " 포트로 송수신 시작");
-//				socket = new DatagramSocket(NetConfig.CLIENT_PORT);
-//				packet = new DatagramPacket(packetBuf, packetSize);
-//				socket.setReceiveBufferSize(58*40); // 20개만 살려둔다.
-//			} catch (SocketException e) {
-//				e.printStackTrace();
-//			}
-//		}
+		if (local) {
+			queue.clear();
+		} else { // socket 초기화
+			if (socket != null) {
+				socket.close();
+				socket = null;
+			}
+			try {
+				Log.d(TAG, NetConfig.CLIENT_PORT + " 포트로 송수신 시작");
+				socket = new DatagramSocket(NetConfig.CLIENT_PORT);
+				packet = new DatagramPacket(packetBuf, packetSize);
+				socket.setReceiveBufferSize(58*40); // 20개만 살려둔다.
+			} catch (SocketException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		new Thread(this).start();
 	}
@@ -151,7 +151,7 @@ public class Sender implements Runnable {
 			timestamp.putInt(0, seq++);
 			System.arraycopy(timestamp.array(), 0, arr, 0, 4);
 			
-
+			
 			if (local) { // 로컬일 경우 큐에 넣는다.
 				queue.add(arr); 
 				if (queue.size()>10) queue.poll(); // 10개만 유지시킨다.
@@ -199,109 +199,59 @@ public class Sender implements Runnable {
 		long before, start = System.currentTimeMillis();
 		long reload = System.currentTimeMillis();
 		
-		opensl_example.start_process();
-//		audioRecord.startRecording();
-		while (isSendering) {    
-			         
-			    
-//			bufferRead = BUFFER_FRAME_SIZE;
+		int mode = 0;
+		
+		
+		short[] bufferTmp = new short[BUFFER_FRAME_SIZE];
+		if (mode == 0) {
+			opensl_example.start_process();
+		} else {
+			audioRecord.startRecording();
+		}
+		
+		while (isSendering) {    	         
+			if (mode == 0) {
+				bufferTmp = Arrays.copyOf(opensl_example.getBuffer(), BUFFER_FRAME_SIZE);
+				bufferRead = BUFFER_FRAME_SIZE;
+				Log.d("mode", "JNI");
+			} else {
+				bufferRead = audioRecord.read(lin, 0, BUFFER_FRAME_SIZE);
+				bufferTmp = Arrays.copyOf(lin, BUFFER_FRAME_SIZE);
+				Log.d("mode", "audioRecord");
+			}
 			before = start;       
 			start = System.currentTimeMillis();
-//			bufferRead = audioRecord.read(lin, 0, BUFFER_FRAME_SIZE);
-			 
-			
-			//-------------------------------------------------------------------------
-//			opensl_example.setBuffer(opensl_example.getBuffer());
-//			lin = opensl_example.getBuffer();
-			
-			 
-//			opensl_example.setBuffer(opensl_example.getBuffer());
-			 
-			short[] bufferTmp = new short[BUFFER_FRAME_SIZE];
-//			bufferTmp = opensl_example.getBuffer();
-			bufferTmp = Arrays.copyOf(opensl_example.getBuffer(), BUFFER_FRAME_SIZE);
-//			bufferTmp = lin;
+		
+			if (bufferRead > 0) { // short 기준 읽어온 사이즈, 읽어온 데이터가 있어야 전송
+				encoded = new byte[BUFFER_FRAME_SIZE*2]; // 인코딩 버퍼를 원본 음성만큼 잡는다.
+				if (encode) { // 인코딩을 할 경우, 인코딩 후 데이터 크기는 줄어든다.
+					// sipdroid 코덱들은 RTP용 12바이트를 앞쪽에 추가하여 인코딩된다.
 
-//			System.arraycopy(bufferTmp, 0, opensl_example.getBuffer(), 0, BUFFER_FRAME_SIZE);
-//			bufferTmp = opensl_example.getBuffer();
-			Log.d("size init2", String.valueOf(bufferTmp.length));
+					encodeSize = codec.encode(bufferTmp, 0, encoded, bufferTmp.length);
 
-//			lin = bufferTmp;
-			int min = 0, max = 0, average = 0;
-			for(int i = 0; i < BUFFER_FRAME_SIZE; i++) { 
-				average = average + bufferTmp[i];
-				if (bufferTmp[i] < min) {
-					min = bufferTmp[i]; 
+					Log.d(TAG, "(+"+(start-before)+")read size : "+(bufferRead*2)+" byte, encoded size : "+encodeSize+" byte");
+				} else { // 인코딩하지 않을 경우, 원본과 사이즈가 동일하다.
+					short[] buf = new short[BUFFER_FRAME_SIZE];
+					System.arraycopy(bufferTmp, 0, buf, 0, bufferRead);
+					ByteBuffer.wrap(encoded).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(buf);
+					
+					// gzip 추가
+					
+					encodeSize = bufferRead*2;
+					Log.d(TAG, "(+"+(start-before)+")read size : "+(bufferRead*2)+" byte");
 				}
-				if (bufferTmp[i] > max) {
-					max = bufferTmp[i];
-				}
-//				if (bufferTmp[i] == 0) {
-//					bufferTmp[i] = 1;
-//				} 
-			} 
-//			Log.i(TAG, shortToHex(bufferTmp)); 
-			Log.d("init", "-----------------------------------------------------");
-			Log.d("init", String.valueOf(bufferTmp[0]));
-			Log.d("init1", String.valueOf(bufferTmp[1]));
-			Log.d("init2", String.valueOf(bufferTmp[2]));
-////			Log.d("init", String.valueOf(bufferTmp[3]));
-//			Log.d("init", String.valueOf(bufferTmp[4]));
-////			Log.d("init", String.valueOf(bufferTmp[5]));
-//			Log.d("init", String.valueOf(bufferTmp[6]));
-////			Log.d("init", String.valueOf(bufferTmp[7]));
-//			Log.d("init", String.valueOf(bufferTmp[8]));   
-////			Log.d("init", String.valueOf(bufferTmp[9]));
-//			Log.d("init", String.valueOf(bufferTmp[10]));
-//			Log.d("init", String.valueOf(bufferTmp[20]));
-//			Log.d("init", String.valueOf(bufferTmp[30]));
-//			Log.d("init", String.valueOf(bufferTmp[40]));
-			Log.d("init159", String.valueOf(bufferTmp[159])); 
-//			Log.d("init64", String.valueOf(bufferTmp[64]));
-//			Log.d("init65", String.valueOf(bufferTmp[65]));
-//			Log.d("init", String.valueOf(opensl_example.getBuffer().length));
-//			Log.d("init", String.valueOf(bufferTmp.length));
-			Log.d("min", String.valueOf(min));
-			Log.d("max", String.valueOf(max)); 
-			Log.d("average", String.valueOf(average/BUFFER_FRAME_SIZE));
-			Log.d("size", String.valueOf(bufferTmp.length));
-			//-------------------------------------------------------------------------
-			
-			
-			
-//			audioRecord.read(lin, 0, BUFFER_FRAME_SIZE); // discard for remove delay
-			
-			bufferRead = BUFFER_FRAME_SIZE;
-			
-			
-			if (bufferTmp[0] != 0) {
-				if (bufferRead > 0) { // short 기준 읽어온 사이즈, 읽어온 데이터가 있어야 전송
-					encoded = new byte[BUFFER_FRAME_SIZE*2]; // 인코딩 버퍼를 원본 음성만큼 잡는다.
-					if (encode) { // 인코딩을 할 경우, 인코딩 후 데이터 크기는 줄어든다.
-						// sipdroid 코덱들은 RTP용 12바이트를 앞쪽에 추가하여 인코딩된다.
-
-						encodeSize = codec.encode(bufferTmp, 0, encoded, bufferTmp.length);
-
-						Log.d(TAG, "(+"+(start-before)+")read size : "+(bufferRead*2)+" byte, encoded size : "+encodeSize+" byte");
-					} else { // 인코딩하지 않을 경우, 원본과 사이즈가 동일하다.
-						short[] buf = new short[BUFFER_FRAME_SIZE];
-						System.arraycopy(bufferTmp, 0, buf, 0, bufferRead);
-						ByteBuffer.wrap(encoded).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(buf);
-						
-						// gzip 추가
-						
-						encodeSize = bufferRead*2;
-						Log.d(TAG, "(+"+(start-before)+")read size : "+(bufferRead*2)+" byte");
-					}
-					Log.d("debug", "here1");
-
-					sendData(encoded, encodeSize, start);
-				} else {
-					Log.e(TAG, "bufferRead : "+bufferRead);
-				}
-				before = start;
 				
-				
+				Log.d("debug", String.valueOf(encoded[0]));
+				Log.d("debug", String.valueOf(encoded[1]));
+				Log.d("debug", String.valueOf(encoded[2]));
+
+				sendData(encoded, encodeSize, start);
+			} else {
+				Log.e(TAG, "bufferRead : "+bufferRead);
+			}
+			before = start;
+			
+			
 //				if (reload < start - 10000) {
 //					audioRecord.stop();
 //					audioRecord.release();
@@ -312,19 +262,17 @@ public class Sender implements Runnable {
 //					audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLERATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
 //					audioRecord.startRecording();
 //				}
-				
-				
-				try {
+			
+			
+			try {
 //					Thread.sleep(FRAME_PERIOD/2);
 //					Thread.sleep(FRAME_PERIOD*3/4);
-					long sleep = FRAME_PERIOD - System.currentTimeMillis() + start - 2;
-					Thread.sleep(sleep > 0 ? sleep : 0);
-					Log.d(TAG, "sleep : "+(sleep > 0 ? sleep : 0));
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			
+				long sleep = FRAME_PERIOD - System.currentTimeMillis() + start - 2;
+				Thread.sleep(sleep > 0 ? sleep : 0);
+				Log.d(TAG, "sleep : "+(sleep > 0 ? sleep : 0));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}			
 		}
 //
 		audioRecord.stop();
@@ -339,7 +287,48 @@ public class Sender implements Runnable {
 		Log.d(TAG, "stop");
 	} 
 	
-	
+	private void startLogging(short[] bufferTmp) {
+		int min = 0, max = 0, average = 0;
+		for(int i = 0; i < BUFFER_FRAME_SIZE; i++) { 
+			average = average + bufferTmp[i];
+			if (bufferTmp[i] < min) {
+				min = bufferTmp[i]; 
+			}
+			if (bufferTmp[i] > max) {
+				max = bufferTmp[i];
+			}
+//			if (bufferTmp[i] == 0) {
+//				bufferTmp[i] = 1;
+//			} 
+		} 
+//		Log.i(TAG, shortToHex(bufferTmp)); 
+		Log.d("init", "-----------------------------------------------------");
+		Log.d("init", String.valueOf(bufferTmp[0]));
+		Log.d("init1", String.valueOf(bufferTmp[1]));
+		Log.d("init2", String.valueOf(bufferTmp[2]));
+////		Log.d("init", String.valueOf(bufferTmp[3]));
+//		Log.d("init", String.valueOf(bufferTmp[4]));
+////		Log.d("init", String.valueOf(bufferTmp[5]));
+//		Log.d("init", String.valueOf(bufferTmp[6]));
+////		Log.d("init", String.valueOf(bufferTmp[7]));
+//		Log.d("init", String.valueOf(bufferTmp[8]));   
+////		Log.d("init", String.valueOf(bufferTmp[9]));
+//		Log.d("init", String.valueOf(bufferTmp[10]));
+//		Log.d("init", String.valueOf(bufferTmp[20]));
+//		Log.d("init", String.valueOf(bufferTmp[30]));
+//		Log.d("init", String.valueOf(bufferTmp[40]));
+		Log.d("init159", String.valueOf(bufferTmp[159])); 
+//		Log.d("init64", String.valueOf(bufferTmp[64]));
+//		Log.d("init65", String.valueOf(bufferTmp[65]));
+//		Log.d("init", String.valueOf(opensl_example.getBuffer().length));
+//		Log.d("init", String.valueOf(bufferTmp.length));
+		Log.d("min", String.valueOf(min));
+		Log.d("max", String.valueOf(max)); 
+		Log.d("average", String.valueOf(average/BUFFER_FRAME_SIZE));
+		Log.d("size", String.valueOf(bufferTmp.length));
+//		Log.d("hex", shortToHex(bufferTmp));
+		//-------------------------------------------------------------------------		
+	}
 	
 	/** 테스트용 **/
 

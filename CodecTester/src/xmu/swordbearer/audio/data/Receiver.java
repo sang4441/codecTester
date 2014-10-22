@@ -106,6 +106,9 @@ public class Receiver implements Runnable {
 		try {
 			if (Sender.local) { // 로컬일 경우 큐에서 가져온다.
 				data = Sender.queue.poll(Sender.FRAME_PERIOD*20, TimeUnit.MILLISECONDS);
+				if (data == null) {
+					return null;
+				}
 				len = data.length;
 				Log.d(TAG, "get "+data.length+" bytes from queue");
 			} else {
@@ -168,6 +171,9 @@ public class Receiver implements Runnable {
 
 			befseq = seq;
 			byte[] data = receiveData(end);
+			if (data == null) {
+				continue;
+			}
 //			Log.d(TAG, "received data : "+Sender.byteToHex(data));
 			
 			if (seq <= befseq) {
