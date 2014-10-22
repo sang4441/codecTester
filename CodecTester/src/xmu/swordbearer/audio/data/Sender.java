@@ -241,15 +241,15 @@ public class Sender implements Runnable {
 					Log.d(TAG, "(+"+(start-before)+")read size : "+(bufferRead*2)+" byte");
 				}
 				
-				Log.d("debug", String.valueOf(encoded[0]));
-				Log.d("debug", String.valueOf(encoded[1]));
-				Log.d("debug", String.valueOf(encoded[2]));
+//				Log.d("debug", String.valueOf(encoded[0]));
+//				Log.d("debug", String.valueOf(encoded[1]));
+//				Log.d("debug", String.valueOf(encoded[2]));
 
 				sendData(encoded, encodeSize, start);
 			} else {
 				Log.e(TAG, "bufferRead : "+bufferRead);
 			}
-			before = start;
+			before = start; 
 			
 			
 //				if (reload < start - 10000) {

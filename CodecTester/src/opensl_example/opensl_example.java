@@ -8,6 +8,8 @@
 
 package opensl_example;
 
+import android.util.Log;
+
 public class opensl_example {
   public static void start_process() {
     opensl_exampleJNI.start_process();

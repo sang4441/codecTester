@@ -321,9 +321,12 @@ SWIGEXPORT void JNICALL Java_opensl_1example_opensl_1exampleJNI_setBuffer(JNIEnv
 
 //	jshort* bufferArray = reinterpret_cast<jshort*>(AgentBase::GetMemoryManager()
 //	                    .Allocate(sizeof(jshort)*64 JDWP_FILE_LINE));
-	jshort * arrayElements;
-	jenv->GetShortArrayRegion(lin, 0, 160, arrayElements);
-    setBuffer(arrayElements);
+	short tmp[160];
+//    memcpy (tmp, lin, 160 *sizeof(short));
+    jenv->GetShortArrayRegion(lin, 0, 160, tmp);
+//	jshort * arrayElements;
+//	jenv->GetShortArrayRegion(lin, 0, 160, arrayElements);
+    setBuffer(tmp);
 }
 
 

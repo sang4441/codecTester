@@ -33,7 +33,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define BUFFERFRAMES 1024
 //#define VECSAMPS_MONO 64
 #define VECSAMPS_MONO 160
-#define VECSAMPS_STEREO 128
+//#define VECSAMPS_STEREO 128
+#define VECSAMPS_STEREO 320
+
 #define SR 8000
 
 static int on;
@@ -66,7 +68,7 @@ short * getBuffer() {
 		}
 	}
 	char str[15];
-	__android_log_write(ANDROID_LOG_ERROR, "line", "-------------------------------------------------------");
+//	__android_log_write(ANDROID_LOG_ERROR, "line", "-------------------------------------------------------");
 
 //	sprintf(str, "%d", inbuffer[0]);
 //	__android_log_write(ANDROID_LOG_ERROR, "init", str);
@@ -96,29 +98,31 @@ short * getBuffer() {
 //	__android_log_write(ANDROID_LOG_ERROR, "init", str);
 //	sprintf(str, "%d", inbuffer[40]);
 //	__android_log_write(ANDROID_LOG_ERROR, "init", str);
-	sprintf(str, "%d", inbuffer[0]);
-	__android_log_write(ANDROID_LOG_ERROR, "init0", str);
-	sprintf(str, "%d", inbuffer[1]);
-	__android_log_write(ANDROID_LOG_ERROR, "init1", str);
-	sprintf(str, "%d", inbuffer[2]);
-	__android_log_write(ANDROID_LOG_ERROR, "init2", str);
-	sprintf(str, "%d", inbuffer[159]);
-	__android_log_write(ANDROID_LOG_ERROR, "init159", str);
-	sprintf(str, "%d", min);
-	__android_log_write(ANDROID_LOG_ERROR, "Min", str);
-	sprintf(str, "%d", max);
-	__android_log_write(ANDROID_LOG_ERROR, "Max", str);
-	sprintf(str, "%d", average/VECSAMPS_MONO);
-	__android_log_write(ANDROID_LOG_ERROR, "Average", str);
-	sprintf(str, "%d", inbuffer);
-	__android_log_write(ANDROID_LOG_ERROR, "Average", str);
+//	sprintf(str, "%d", inbuffer[0]);
+//	__android_log_write(ANDROID_LOG_ERROR, "init0", str);
+//	sprintf(str, "%d", inbuffer[1]);
+//	__android_log_write(ANDROID_LOG_ERROR, "init1", str);
+//	sprintf(str, "%d", inbuffer[2]);
+//	__android_log_write(ANDROID_LOG_ERROR, "init2", str);
+//	sprintf(str, "%d", inbuffer[159]);
+//	__android_log_write(ANDROID_LOG_ERROR, "init159", str);
+//	sprintf(str, "%d", min);
+//	__android_log_write(ANDROID_LOG_ERROR, "Min", str);
+//	sprintf(str, "%d", max);
+//	__android_log_write(ANDROID_LOG_ERROR, "Max", str);
+//	sprintf(str, "%d", average/VECSAMPS_MONO);
+//	__android_log_write(ANDROID_LOG_ERROR, "Average", str);
+//	sprintf(str, "%d", inbuffer);
+//	__android_log_write(ANDROID_LOG_ERROR, "Average", str);
 
 	return inbuffer;
 }
 void setBuffer(short * data) {
+	__android_log_write(ANDROID_LOG_ERROR, "Average", "hello");
 	int i, j;
+
 	short outbuffer[VECSAMPS_STEREO];
-	for(i = 0, j=0; i < samps; i++, j+=2) {
+	for(i = 0, j=0; i < VECSAMPS_MONO; i++, j+=2) {
 		 outbuffer[j] = outbuffer[j+1] = data[i];
 	}
     android_AudioOut(p,outbuffer,samps*2);

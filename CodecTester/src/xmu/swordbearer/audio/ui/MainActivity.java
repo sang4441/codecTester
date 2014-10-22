@@ -42,7 +42,7 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 	private static TextView textLog;
 	private static ScrollView svLog;
 	
-	public void onCreate(Bundle savedInstanceState) { 
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		audioWrapper = AudioWrapper.getInstance();
@@ -54,7 +54,7 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 		DiscoveryInfo info = getStunInfo("s2.taraba.net", 3478);
 		Log.d(LOG, info.toString());
 		Log(info.toString());
-	} 
+	}
 
 	public static DiscoveryInfo getStunInfo(String server, int port) {
 		StunClient client = new StunClient(server, port);
@@ -210,7 +210,7 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 				NetConfig.setServerHost(ipString);
 				btnStartRecord.setEnabled(false);
 				btnStopRecord.setEnabled(true);
-				audioWrapper.startRecord();
+//				audioWrapper.startRecord();
 				audioWrapper.startSend();
 			}
 		});
@@ -219,16 +219,16 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 			public void onClick(View arg0) {
 				btnStartRecord.setEnabled(true);
 				btnStopRecord.setEnabled(false);
-				audioWrapper.stopRecord();
+//				audioWrapper.stopRecord();
 				audioWrapper.stopSend();
 			}
-		});
+		});  
 		btnStartListen.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View arg0) {
 				btnStartListen.setEnabled(false);
 				btnStopListen.setEnabled(true);
-				audioWrapper.startListen();
+//				audioWrapper.startListen();
 				audioWrapper.startReceive();
 			}
 		});
@@ -236,7 +236,7 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 			public void onClick(View arg0) {
 				btnStartListen.setEnabled(true);
 				btnStopListen.setEnabled(false);
-				audioWrapper.stopListen();
+//				audioWrapper.stopListen();
 				audioWrapper.stopReceive();
 			}
 		});

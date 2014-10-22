@@ -9,6 +9,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.concurrent.TimeUnit;
 
+import opensl_example.opensl_example;
+
 import org.sipdroid.codecs.Codec;
 import org.sipdroid.codecs.Codecs;
 
@@ -221,8 +223,10 @@ public class Receiver implements Runnable {
 				}
 				Log.i(TAG, "Sender.queue.size() : "+Sender.queue.size());
 
-				audioTrack.write(lin, 0, decodeSize);
-				
+				Log.i(TAG, "lin[0] : "+String.valueOf(lin[0]));
+				Log.i(TAG, "lin length : "+String.valueOf(lin.length));
+//				audioTrack.write(lin, 0, decodeSize);
+				opensl_example.setBuffer(lin); 
 //				if (reload < start - 10000) {
 //					audioTrack.stop();
 //					audioTrack.release();
