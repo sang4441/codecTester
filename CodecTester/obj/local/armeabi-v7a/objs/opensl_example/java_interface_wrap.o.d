@@ -1,6 +1,5 @@
 C:\Users\Bridge-R2-PC2\workspace\CodecTester/obj/local/armeabi-v7a/objs/opensl_example/java_interface_wrap.o: \
  C:\Users\Bridge-R2-PC2\workspace\CodecTester/jni/java_interface_wrap.cpp \
- C:/Users/Bridge-R2-PC2/Downloads/android-ndk32-r10-windows-x86_64/android-ndk-r10/platforms/android-19/arch-arm/usr/include/android/log.h \
  C:/Users/Bridge-R2-PC2/Downloads/android-ndk32-r10-windows-x86_64/android-ndk-r10/platforms/android-19/arch-arm/usr/include/jni.h \
  C:/Users/Bridge-R2-PC2/Downloads/android-ndk32-r10-windows-x86_64/android-ndk-r10/platforms/android-19/arch-arm/usr/include/sys/cdefs.h \
  C:/Users/Bridge-R2-PC2/Downloads/android-ndk32-r10-windows-x86_64/android-ndk-r10/platforms/android-19/arch-arm/usr/include/sys/cdefs_elf.h \
@@ -24,8 +23,6 @@ C:\Users\Bridge-R2-PC2\workspace\CodecTester/obj/local/armeabi-v7a/objs/opensl_e
  C:/Users/Bridge-R2-PC2/Downloads/android-ndk32-r10-windows-x86_64/android-ndk-r10/platforms/android-19/arch-arm/usr/include/sys/sysmacros.h \
  C:/Users/Bridge-R2-PC2/Downloads/android-ndk32-r10-windows-x86_64/android-ndk-r10/platforms/android-19/arch-arm/usr/include/memory.h \
  C:\Users\Bridge-R2-PC2\workspace\CodecTester/jni/opensl_example.h
-
-C:/Users/Bridge-R2-PC2/Downloads/android-ndk32-r10-windows-x86_64/android-ndk-r10/platforms/android-19/arch-arm/usr/include/android/log.h:
 
 C:/Users/Bridge-R2-PC2/Downloads/android-ndk32-r10-windows-x86_64/android-ndk-r10/platforms/android-19/arch-arm/usr/include/jni.h:
 

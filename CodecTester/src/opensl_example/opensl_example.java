@@ -8,8 +8,6 @@
 
 package opensl_example;
 
-import android.util.Log;
-
 public class opensl_example {
   public static void start_process() {
     opensl_exampleJNI.start_process();
@@ -19,13 +17,13 @@ public class opensl_example {
     opensl_exampleJNI.stop_process();
   }
 
-  public static short[] getBuffer() {
-    short[] cPtr = opensl_exampleJNI.getBuffer();
+  public static short[] getBuffer(int samplingRate, int bufferSize) {
+	short[] cPtr = opensl_exampleJNI.getBuffer(samplingRate, bufferSize);
     return cPtr;
   }
 
-  public static void setBuffer(short[] data) {
-    opensl_exampleJNI.setBuffer(data);
+  public static void setBuffer(short[] data, int bufferSize) {
+    opensl_exampleJNI.setBuffer(data, bufferSize);
   }
 
 }

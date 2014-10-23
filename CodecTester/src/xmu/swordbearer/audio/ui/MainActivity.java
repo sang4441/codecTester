@@ -116,6 +116,10 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 	public void onClick(View v) {
 		switch(v.getId()) {
 		case R.id.startEcho:
+			if (!Sender.isAudioRecord) {
+				Sender.SAMPLERATE_TMP = Integer.parseInt(srEditText.getText().toString());
+				Sender.BUFFER_FRAME_SIZE_TMP = Integer.parseInt(bsEditText.getText().toString());
+			}
 			audioWrapper.startSend();
 			audioWrapper.startReceive();
 			btnStartEcho.setEnabled(false);
@@ -209,6 +213,8 @@ public class MainActivity extends Activity implements OnClickListener, OnChecked
 		btnStopRecord = (Button) findViewById(R.id.stopRecord);
 		btnStopListen = (Button) findViewById(R.id.stopListen);
 		ipEditText = (EditText) findViewById(R.id.edittext_ip);
+		srEditText = (EditText) findViewById(R.id.sampling_rate);
+		bsEditText = (EditText) findViewById(R.id.buffer_size);
 
 		btnStopRecord.setEnabled(false);
 		btnStopListen.setEnabled(false);

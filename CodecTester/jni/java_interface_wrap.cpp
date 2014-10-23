@@ -7,7 +7,7 @@
  * changes to this file unless you know what you are doing--modify the SWIG
  * interface file instead.
  * ----------------------------------------------------------------------------- */
-#include <android/log.h>
+
 #define SWIGJAVA
 
 
@@ -232,49 +232,29 @@ SWIGEXPORT void JNICALL Java_opensl_1example_opensl_1exampleJNI_stop_1process(JN
 }
 
 
-//SWIGEXPORT jlong JNICALL Java_opensl_1example_opensl_1exampleJNI_getBuffer(JNIEnv *jenv, jclass jcls) {
-//  jlong jresult = 0 ;
-//  short *result = 0 ;
-//
-//  (void)jenv;
-//  (void)jcls;
-//  result = (short *)getBuffer();
-//  *(short **)&jresult = result;
-//  return jresult;
-//}
-//
-//
-//SWIGEXPORT void JNICALL Java_opensl_1example_opensl_1exampleJNI_setBuffer(JNIEnv *jenv, jclass jcls, jlong jarg1) {
-//  short *arg1 = (short *) 0 ;
-//
-//  (void)jenv;
-//  (void)jcls;
-//  arg1 = *(short **)&jarg1;
-//  setBuffer(arg1);
-//}
-//
-//
-//#ifdef __cplusplus
-//}
-//#endif
 
+SWIGEXPORT jshortArray JNICALL Java_opensl_1example_opensl_1exampleJNI_getBuffer(JNIEnv *jenv, jclass jcls, jint jarg1, jint jarg2) {
 
-SWIGEXPORT jshortArray JNICALL Java_opensl_1example_opensl_1exampleJNI_getBuffer(JNIEnv *jenv, jclass jcls) {
-  jshortArray ret = jenv->NewShortArray(160* sizeof(short));
-  short tmp[160];
-  memcpy (tmp, getBuffer(), 160 *sizeof(short));
-  jenv->SetShortArrayRegion(ret, 0, 160 * sizeof(short), tmp);
+  int SAMPLING_RATE = (int)jarg1;
+  int BUFFER_SIZE = (int)jarg2;
+  jshortArray ret = jenv->NewShortArray(BUFFER_SIZE* sizeof(short));
+  short tmp[BUFFER_SIZE];
+  memcpy (tmp, getBuffer(SAMPLING_RATE, BUFFER_SIZE), BUFFER_SIZE *sizeof(short));
+  jenv->SetShortArrayRegion(ret, 0, BUFFER_SIZE * sizeof(short), tmp);
   return ret;
 }
 
 
-SWIGEXPORT void JNICALL Java_opensl_1example_opensl_1exampleJNI_setBuffer(JNIEnv *jenv, jclass jcls, jshortArray lin) {
-	short tmp[160];
-    jenv->GetShortArrayRegion(lin, 0, 160, tmp);
-    setBuffer(tmp);
+SWIGEXPORT void JNICALL Java_opensl_1example_opensl_1exampleJNI_setBuffer(JNIEnv *jenv, jclass jcls, jshortArray lin, jint jarg2) {
+	int BUFFER_SIZE = (int)jarg2;
+	short tmp[BUFFER_SIZE];
+    jenv->GetShortArrayRegion(lin, 0, BUFFER_SIZE, tmp);
+    setBuffer(tmp, BUFFER_SIZE);
 }
+
 
 
 #ifdef __cplusplus
 }
 #endif
+

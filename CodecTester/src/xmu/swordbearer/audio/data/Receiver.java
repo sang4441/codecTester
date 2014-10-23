@@ -231,8 +231,12 @@ public class Receiver implements Runnable {
 
 				Log.i(TAG, "lin[0] : "+String.valueOf(lin[0]));
 				Log.i(TAG, "lin length : "+String.valueOf(lin.length));
-//				audioTrack.write(lin, 0, decodeSize);
-				opensl_example.setBuffer(lin); 
+				
+				if (Sender.isAudioRecord) {
+					audioTrack.write(lin, 0, decodeSize);
+				} else {
+					opensl_example.setBuffer(lin, Sender.BUFFER_FRAME_SIZE); 
+				}
 //				if (reload < start - 10000) {
 //					audioTrack.stop();
 //					audioTrack.release();

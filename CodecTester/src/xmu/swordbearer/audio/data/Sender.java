@@ -50,8 +50,10 @@ public class Sender implements Runnable {
 	public static boolean local = false; 
 	public static boolean encode = true;
 	public static boolean time_check = true;
-	public static int SAMPLERATE = 8000; // 8KHZ
-	public static int BUFFER_FRAME_SIZE = 160; // 160 samples = 160 short = 320byte
+	public static int SAMPLERATE; // 8KHZ
+	public static int BUFFER_FRAME_SIZE; // 160 samples = 160 short = 320byte
+	public static int SAMPLERATE_TMP; // 8KHZ
+	public static int BUFFER_FRAME_SIZE_TMP; // 160 samples = 160 short = 320byte
 	public static int FRAME_PERIOD = 20; // ms, 160 samples / 8000 samples/s * 1000(ms/s)
 	public static ArrayBlockingQueue <byte[]> queue = new ArrayBlockingQueue<byte[]>(100);
 	public static String codecName = "PCMA"; // RAW iLBC Opus PCMA PCMU speex silk8 silk16 silk24 GSM BV16 G722
@@ -119,21 +121,30 @@ public class Sender implements Runnable {
 		// Codec 초기화
 		codec = Codecs.getName(codecName);
 		codec.init();
-		SAMPLERATE = codec.samp_rate();
-		BUFFER_FRAME_SIZE = codec.frame_size();
-		FRAME_PERIOD = codec.speed();
+		
+		if (isAudioRecord) {
+			// AudioRecord 초기화
+			int audioBufSize = AudioRecord.getMinBufferSize(SAMPLERATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
+			if (audioBufSize == AudioRecord.ERROR_BAD_VALUE) {
+				Log.e(TAG, "audioBufSize error");
+				return;
+			}
+			Log.d(TAG, "audioBufSize : "+audioBufSize); // 1024
+			if (audioRecord == null) {
+				audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLERATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, audioBufSize);
+			}
+			seq = 0;
+			
+			SAMPLERATE = codec.samp_rate();
+			BUFFER_FRAME_SIZE = codec.frame_size();
+			FRAME_PERIOD = codec.speed();
 
-		// AudioRecord 초기화
-		int audioBufSize = AudioRecord.getMinBufferSize(SAMPLERATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
-		if (audioBufSize == AudioRecord.ERROR_BAD_VALUE) {
-			Log.e(TAG, "audioBufSize error");
-			return;
-		}
-		Log.d(TAG, "audioBufSize : "+audioBufSize); // 1024
-		if (audioRecord == null) {
-			audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, SAMPLERATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, audioBufSize);
-		}
-		seq = 0;
+			audioRecord.startRecording();
+		} else {
+			SAMPLERATE = SAMPLERATE_TMP;
+			BUFFER_FRAME_SIZE = BUFFER_FRAME_SIZE_TMP;
+			opensl_example.start_process(); 
+		}	
 	}
 	
 	// 서버 or queue로 데이터 전송
@@ -157,11 +168,15 @@ public class Sender implements Runnable {
 			if (local) { // 로컬일 경우 큐에 넣는다.
 				queue.add(arr); 
 				if (queue.size()>10) queue.poll(); // 10개만 유지시킨다.
+
+				Log.d("after init**", String.valueOf(SAMPLERATE)); 
+				Log.d("fter init**", String.valueOf(BUFFER_FRAME_SIZE)); 
 			} else { // 서버로 데이터그램을 보낸다.
 				dataPacket = new DatagramPacket(arr, size+(time_check?8:0), ip, port);
 				dataPacket.setData(arr);
 				socket.send(dataPacket);
 				Log.d("debug", "sent");
+				
 			}
 			Log.d(TAG, "sendData"+(time_check?" with timestamp":"")+" : " + arr.length+" byte");
 		} catch (IllegalStateException e) {
@@ -170,14 +185,16 @@ public class Sender implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
+	 
 	private int seq = 0; 
 	// run
-	public void run() {
+	public void run() { 
 		Log.d(TAG, "start");
 //		if (true) { codecTest(); return; }
-		init();  
-
+		init();
+	
+		Log.d("after init**", String.valueOf(SAMPLERATE)); 
+		Log.d("fter init**", String.valueOf(BUFFER_FRAME_SIZE)); 
 		this.isSendering = true;
 		
 		/*
@@ -201,26 +218,22 @@ public class Sender implements Runnable {
 		
 		long before, start = System.currentTimeMillis();
 		long reload = System.currentTimeMillis();		
-		
-
-		if (isAudioRecord) {
-			audioRecord.startRecording();
-		} else {
-			opensl_example.start_process();
-		}
-		
+	   
+				
 		short[] bufferTmp = new short[BUFFER_FRAME_SIZE];
 		
-		
+		 
 		while (isSendering) {    	         
 			if (isAudioRecord) {
 				bufferRead = audioRecord.read(lin, 0, BUFFER_FRAME_SIZE);
 				bufferTmp = Arrays.copyOf(lin, BUFFER_FRAME_SIZE);
 				Log.d("mode", "audioRecord");
 			} else {
-				bufferTmp = Arrays.copyOf(opensl_example.getBuffer(), BUFFER_FRAME_SIZE);
+				Log.d("BFFF", String.valueOf(BUFFER_FRAME_SIZE)); 
+				Log.d("SAAA", String.valueOf(SAMPLERATE)); 
+				bufferTmp = Arrays.copyOf(opensl_example.getBuffer(SAMPLERATE, BUFFER_FRAME_SIZE), BUFFER_FRAME_SIZE);
 				bufferRead = BUFFER_FRAME_SIZE;
-				Log.d("mode", "JNI");
+				Log.d("mode", "JNI"); 
 			}
 			before = start;       
 			start = System.currentTimeMillis();
@@ -229,15 +242,14 @@ public class Sender implements Runnable {
 				encoded = new byte[BUFFER_FRAME_SIZE*2]; // 인코딩 버퍼를 원본 음성만큼 잡는다.
 				if (encode) { // 인코딩을 할 경우, 인코딩 후 데이터 크기는 줄어든다.
 					// sipdroid 코덱들은 RTP용 12바이트를 앞쪽에 추가하여 인코딩된다.
-
 					encodeSize = codec.encode(bufferTmp, 0, encoded, bufferTmp.length);
-
+ 
 					Log.d(TAG, "(+"+(start-before)+")read size : "+(bufferRead*2)+" byte, encoded size : "+encodeSize+" byte");
 				} else { // 인코딩하지 않을 경우, 원본과 사이즈가 동일하다.
 					short[] buf = new short[BUFFER_FRAME_SIZE];
 					System.arraycopy(bufferTmp, 0, buf, 0, bufferRead);
 					ByteBuffer.wrap(encoded).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(buf);
-					
+					   
 					// gzip 추가
 					
 					encodeSize = bufferRead*2;
@@ -278,9 +290,14 @@ public class Sender implements Runnable {
 			}			
 		}
 //
-		audioRecord.stop();
-		audioRecord.release();
-		audioRecord = null;
+		if (isAudioRecord) {
+			audioRecord.stop();
+			audioRecord.release();
+			audioRecord = null;
+		} else {
+			opensl_example.stop_process();
+		}
+
 		
 		if (socket != null) {
 			socket.close();

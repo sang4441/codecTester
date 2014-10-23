@@ -21,6 +21,6 @@ public class opensl_exampleJNI {
 
   public final static native void start_process();
   public final static native void stop_process();
-  public final static native short[] getBuffer();
-  public final static native void setBuffer(short[] jarg1);
+  public final static native short[] getBuffer(int jarg1, int jarg2);
+  public final static native void setBuffer(short[] jarg1, int jarg2);
 }

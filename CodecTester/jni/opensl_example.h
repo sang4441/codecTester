@@ -32,8 +32,8 @@ extern "C" {
 #endif
   void start_process();
   void stop_process();
-  short * getBuffer();
-  void setBuffer(short * data);
+  short * getBuffer(int samplingRate, int bufferSize);
+  void setBuffer(short * data, int bufferSize);
 #ifdef __cplusplus
 };
 #endif
